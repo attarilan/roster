@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17594c">
+<title>Statement Roster</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2317594c'/%3E%3Cpath d='M8 11h16M8 16h16M8 21h10' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a pegboard shift board — compact top bar, shift "brushes" you pick up, a week grid you paint, totals at the edges. */
+:root{
+  --bg:#eef0ec; --surface:#fbfcfa; --sunk:#e3e6e1; --line:#cfd4cd; --ink:#1b211e; --muted:#5d6760;
+  --accent:#17594c; --accent-ink:#ffffff; --accent-soft:#d5e7e1;
+  --warn:#9a4a12; --warn-soft:#f6e3d2; --ok:#2b6b33; --ok-soft:#dcecd9;
+  --c0-bg:#d9ead3;--c0-fg:#244a1c; --c1-bg:#fde7b4;--c1-fg:#6b4800; --c2-bg:#d3e3f6;--c2-fg:#173f6b;
+  --c3-bg:#ecd6f0;--c3-fg:#5b2266; --c4-bg:#f8d5cd;--c4-fg:#7a2614; --c5-bg:#cfeee9;--c5-fg:#11524a;
+  --c6-bg:#e6e3dc;--c6-fg:#4a4740; --c7-bg:#f3d9e4;--c7-fg:#73213f;
+  --f-display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:8px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141816; --surface:#1c211e; --sunk:#232925; --line:#333b36; --ink:#e7ebe7; --muted:#9aa59e;
+  --accent:#5cc2a8; --accent-ink:#0c1a16; --accent-soft:#1f3b34;
+  --warn:#f0a56a; --warn-soft:#3d2a1c; --ok:#8fd19a; --ok-soft:#1f3322;
+  --c0-bg:#2a4425;--c0-fg:#bfe3b3; --c1-bg:#4a3a12;--c1-fg:#f8d987; --c2-bg:#1f3550;--c2-fg:#b5d2f3;
+  --c3-bg:#41264a;--c3-fg:#e3bdec; --c4-bg:#4d2620;--c4-fg:#f5b9aa; --c5-bg:#173f3a;--c5-fg:#a6e6dc;
+  --c6-bg:#33322e;--c6-fg:#cfccc4; --c7-bg:#4a2335;--c7-fg:#f1b8cf; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141816; --surface:#1c211e; --sunk:#232925; --line:#333b36; --ink:#e7ebe7; --muted:#9aa59e;
+  --accent:#5cc2a8; --accent-ink:#0c1a16; --accent-soft:#1f3b34;
+  --warn:#f0a56a; --warn-soft:#3d2a1c; --ok:#8fd19a; --ok-soft:#1f3322;
+  --c0-bg:#2a4425;--c0-fg:#bfe3b3; --c1-bg:#4a3a12;--c1-fg:#f8d987; --c2-bg:#1f3550;--c2-fg:#b5d2f3;
+  --c3-bg:#41264a;--c3-fg:#e3bdec; --c4-bg:#4d2620;--c4-fg:#f5b9aa; --c5-bg:#173f3a;--c5-fg:#a6e6dc;
+  --c6-bg:#33322e;--c6-fg:#cfccc4; --c7-bg:#4a2335;--c7-fg:#f1b8cf; color-scheme:dark}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+[hidden]{display:none!important}
+img{max-width:100%}
+html,body{background:var(--bg);color:var(--ink)}
+body{margin:0;font-family:var(--f-body);font-size:14px;line-height:1.45}
+.auth{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.auth .who-in{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+*{box-sizing:border-box}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding-block:10px}
+.brand{font-family:var(--f-display);font-weight:800;font-size:19px;letter-spacing:-.01em;display:flex;align-items:baseline;gap:8px}
+.brand small{font-family:var(--f-body);font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+nav.tabs{display:flex;gap:2px;background:var(--sunk);border-radius:999px;padding:3px;margin-left:auto}
+nav.tabs a{padding:6px 14px;border-radius:999px;text-decoration:none;color:var(--muted);font-weight:600;font-size:13px}
+nav.tabs a[aria-current="page"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgb(0 0 0 / .08)}
+
+main{padding-block:18px 60px;display:grid;gap:16px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:7px 12px;font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.danger{color:var(--warn)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.icon-btn{width:34px;height:34px;justify-content:center;padding:0;font-size:16px}
+
+.weekbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.weekbar h1{font-family:var(--f-display);font-weight:800;font-size:clamp(22px,4vw,30px);letter-spacing:-.02em;margin:0;line-height:1.1;text-wrap:balance}
+.weekbar .sub{color:var(--muted);font-size:13px}
+.weekbar .grow{flex:1}
+.navgroup{display:flex;gap:4px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:4px 9px;border-radius:999px}
+.pill.draft{background:var(--warn-soft);color:var(--warn)}
+.pill.locked{background:var(--ok-soft);color:var(--ok)}
+.pill.empty{background:var(--sunk);color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:6px}
+
+.notice{border-radius:var(--r);padding:10px 14px;background:var(--sunk);color:var(--ink);font-size:13px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.notice.warn{background:var(--warn-soft);color:var(--warn)}
+.notice .grow{flex:1;min-width:200px}
+
+.palette{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hdr,56px));z-index:4;background:var(--bg);padding-block:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.palette .lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.chip{display:inline-flex;align-items:center;gap:7px;border:1.5px solid transparent;border-radius:999px;padding:5px 11px 5px 6px;cursor:pointer;font-weight:600;font-size:13px;background:var(--surface)}
+.chip .code{font-family:var(--f-mono);font-size:11px;border-radius:5px;padding:2px 5px;min-width:26px;text-align:center}
+.chip .t{font-family:var(--f-mono);font-size:11px;color:var(--muted);font-weight:500}
+.chip[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px var(--ink)}
+.chip.erase .code{background:var(--sunk);color:var(--muted)}
+.hint{font-size:12px;color:var(--muted);margin-left:auto}
+
+.gridbox{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table.grid{border-collapse:separate;border-spacing:0;width:100%;min-width:820px;font-variant-numeric:tabular-nums}
+.grid th,.grid td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:0}
+.grid tr>*:last-child{border-right:0}
+.grid thead th{background:var(--sunk);font-weight:600;font-size:12px;padding:8px 6px;text-align:center;position:sticky;top:0}
+.grid thead th .dn{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.grid thead th .dd{display:block;font-family:var(--f-display);font-weight:800;font-size:18px;line-height:1.1}
+.grid thead th.today{background:var(--accent-soft)}
+.grid thead th.today .dn{color:var(--accent)}
+.grid .who{position:sticky;left:0;z-index:2;background:var(--surface);text-align:left;padding:8px 12px;min-width:150px;max-width:190px}
+.grid thead .who{z-index:3;background:var(--sunk);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.who .nm{font-weight:700;font-size:14px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.who .rl{font-size:12px;color:var(--muted)}
+.who .arch{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);margin-left:6px}
+tr.grp td{background:var(--bg);font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding:6px 12px}
+tr.grp td.who{background:var(--bg)}
+td.cell{height:54px;min-width:92px;text-align:center;cursor:pointer;user-select:none;-webkit-user-select:none;position:relative}
+td.cell:hover{background:var(--sunk)}
+td.cell.locked{cursor:default}
+td.cell.locked:hover{background:transparent}
+td.cell.today{background:color-mix(in srgb,var(--accent-soft) 45%,transparent)}
+.sh{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;margin:5px;height:calc(100% - 10px);border-radius:6px;font-weight:700;font-size:13px;line-height:1.1}
+.sh .tm{font-family:var(--f-mono);font-size:10px;font-weight:500;opacity:.85}
+.empty-dot{color:var(--line);font-size:18px}
+td.tot,th.tot{text-align:center;min-width:70px;font-weight:700;font-size:13px}
+td.tot .d{display:block;font-weight:500;font-size:11px;color:var(--muted)}
+tfoot td{background:var(--sunk);font-size:12px;text-align:center;padding:7px 4px;vertical-align:top}
+tfoot td.who{background:var(--sunk);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+tfoot .hc{font-family:var(--f-display);font-weight:800;font-size:17px;display:block}
+tfoot .br{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin-top:3px}
+tfoot .br span{font-family:var(--f-mono);font-size:10px;border-radius:4px;padding:1px 4px}
+tfoot .zero{color:var(--warn)}
+
+.c0{background:var(--c0-bg);color:var(--c0-fg)}.c1{background:var(--c1-bg);color:var(--c1-fg)}.c2{background:var(--c2-bg);color:var(--c2-fg)}.c3{background:var(--c3-bg);color:var(--c3-fg)}
+.c4{background:var(--c4-bg);color:var(--c4-fg)}.c5{background:var(--c5-bg);color:var(--c5-fg)}.c6{background:var(--c6-bg);color:var(--c6-fg)}.c7{background:var(--c7-bg);color:var(--c7-fg)}
+
+.pop{position:absolute;z-index:20;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgb(0 0 0 / .18);padding:6px;display:grid;gap:2px;min-width:200px}
+.pop .ph{font-size:11px;color:var(--muted);padding:4px 8px 6px;font-weight:600}
+.pop button{display:flex;align-items:center;gap:8px;border:0;background:transparent;padding:7px 8px;border-radius:6px;cursor:pointer;text-align:left;font-weight:600}
+.pop button:hover,.pop button:focus-visible{background:var(--sunk)}
+.pop .code{font-family:var(--f-mono);font-size:11px;border-radius:5px;padding:2px 5px;min-width:30px;text-align:center}
+.pop .t{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--muted);font-weight:500}
+
+.notes{display:grid;gap:6px}
+.notes label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+textarea{width:100%;min-height:70px;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:10px 12px;resize:vertical}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.panel-h{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;justify-content:space-between;padding:16px 18px 6px}
+.panel-h h2{font-family:var(--f-display);font-weight:800;font-size:22px;margin:0;letter-spacing:-.01em}
+.panel-h p{margin:0;color:var(--muted);font-size:13px;max-width:60ch}
+.rows{display:grid}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 18px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row.off{opacity:.6}
+.row input[type=text],.row input[type=time],.row select{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:6px 9px;min-width:0}
+.row .nm{flex:1 1 180px}
+.row .rl{flex:0 1 150px}
+.row .cd{width:70px;font-family:var(--f-mono);text-transform:uppercase}
+.row .time{width:108px;font-family:var(--f-mono)}
+.swatches{display:flex;gap:4px}
+.swatches button{width:22px;height:22px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0}
+.swatches button[aria-pressed="true"]{border-color:var(--ink)}
+.addrow{padding:12px 18px 16px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px}
+.addrow input{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:7px 10px;min-width:0}
+.dur{font-family:var(--f-mono);font-size:12px;color:var(--muted);width:44px}
+
+.hist{display:grid}
+.hrow{display:grid;grid-template-columns:minmax(0,1.6fr) auto auto auto;gap:12px;align-items:center;padding:12px 18px;border-top:1px solid var(--line);text-decoration:none;color:inherit;cursor:pointer;background:transparent;border-left:0;border-right:0;border-bottom:0;text-align:left;width:100%}
+.hrow:hover{background:var(--sunk)}
+.hrow .rng{font-weight:700}
+.hrow .meta{font-size:12px;color:var(--muted)}
+.hrow .num{font-variant-numeric:tabular-nums;font-size:13px;text-align:right}
+.yr{padding:14px 18px 4px;font-family:var(--f-display);font-weight:800;font-size:15px;color:var(--muted);border-top:1px solid var(--line)}
+
+.empty{padding:36px 22px;text-align:center;display:grid;gap:10px;justify-items:center}
+.empty h3{font-family:var(--f-display);font-size:20px;margin:0}
+.empty p{margin:0;color:var(--muted);max-width:46ch}
+
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-weight:600;font-size:13px;z-index:30}
+.saving{font-size:12px;color:var(--muted)}
+
+@media (max-width:640px){
+  nav.tabs{margin-left:0;width:100%;justify-content:space-between}
+  nav.tabs a{flex:1;text-align:center;padding:6px 6px}
+  .hint{display:none}
+  .grid .who{min-width:118px}
+  .hrow{grid-template-columns:minmax(0,1fr) auto}
+  .hrow .num.hide-sm{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="top" id="hdr">
+  <div class="wrap">
+    <div class="brand">Statement Roster <small>Kuta</small></div>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#roster" data-v="roster">Roster</a>
+      <a href="#history" data-v="history">History</a>
+      <a href="#team" data-v="team">Team</a>
+      <a href="#shifts" data-v="shifts">Shifts</a>
+    </nav>
+    <div class="auth" id="auth"></div>
+  </div>
+</header>
+<main class="wrap" id="main">
+  <div class="panel"><div class="empty"><h3>Loading the roster…</h3><p>Your team, shift types and saved weeks will appear here.</p></div></div>
+</main>
+<div id="pop" class="pop" hidden></div>
+<div id="toast" class="toast" hidden></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>
+/* Firebase project: schedule-v2-92f1e. Who may EDIT is controlled by the Firestore rules (email list), not by this file. */
+const firebaseConfig = {
+  apiKey: "AIzaSyAV_5_f7dXe7I74MMAVywOy3crwLylJyw0",
+  authDomain: "schedule-v2-92f1e.firebaseapp.com",
+  projectId: "schedule-v2-92f1e",
+  storageBucket: "schedule-v2-92f1e.firebasestorage.app",
+  messagingSenderId: "276929389238",
+  appId: "1:276929389238:web:2afa1b331c153bfc30bc17"
+};
+</script>
+<script>
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const ROLE_SUGGEST=['Head Bar','Barista','Kitchen','Pastry','Cashier','Service','Steward'];
+const S={db:null,authUser:null,authReady:false,readDenied:false,canWrite:false,staff:[],shifts:[],weeks:{},loaded:{staff:false,shifts:false,weeks:false},
+  view:'roster',week:null,brush:null,confirm:null,stale:false,unavailable:false,readOnly:false,saving:false};
+let pending={};          // weekId -> patch {cells:{sid:{date:val}}, people, shiftsUsed, notes, locked}
+let flushTimer=null, flushing=false, deferred=false;
+
+/* ---------- dates ---------- */
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return iso(d)};
+const mondayOf=d=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());const wd=(x.getDay()+6)%7;x.setDate(x.getDate()-wd);return iso(x)};
+const weekDates=w=>DAYS.map((_,i)=>addDays(w,i));
+function rangeLabel(w){const a=parse(w),b=parse(addDays(w,6));
+  return a.getMonth()===b.getMonth()?`${a.getDate()}–${b.getDate()} ${MONTHS[b.getMonth()]} ${b.getFullYear()}`:
+  `${a.getDate()} ${MONTHS[a.getMonth()]} – ${b.getDate()} ${MONTHS[b.getMonth()]} ${b.getFullYear()}`}
+const todayIso=()=>iso(new Date());
+S.week=mondayOf(new Date());
+
+/* ---------- helpers ---------- */
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function mins(t){if(!t||!/^\d\d:\d\d$/.test(t))return null;const[h,m]=t.split(':').map(Number);return h*60+m}
+function shiftHours(sh){if(!sh||sh.kind==='off')return 0;const a=mins(sh.start),b=mins(sh.end);if(a==null||b==null)return 0;let d=b-a;if(d<=0)d+=1440;return d/60}
+const fmtH=h=>(Math.round(h*10)/10).toString().replace(/\.0$/,'')+'h';
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,2200)}
+const sortedShifts=()=>[...S.shifts].sort((a,b)=>(a.order??0)-(b.order??0)||a.name.localeCompare(b.name));
+const sortedStaff=()=>[...S.staff].sort((a,b)=>(a.order??0)-(b.order??0)||a.name.localeCompare(b.name));
+function deepMerge(t,s){for(const k in s){const v=s[k];if(v&&typeof v==='object'&&!Array.isArray(v)){if(!t[k]||typeof t[k]!=='object')t[k]={};deepMerge(t[k],v)}else t[k]=v}return t}
+function weekView(w){ // stored doc + unsaved patch
+  const base=S.weeks[w]?JSON.parse(JSON.stringify(S.weeks[w])):null;
+  if(!pending[w])return base;return deepMerge(base||{weekStart:w,cells:{},people:{},shiftsUsed:{}},JSON.parse(JSON.stringify(pending[w])));
+}
+function shiftFor(id,wk){return S.shifts.find(s=>s.id===id)||(wk&&wk.shiftsUsed&&wk.shiftsUsed[id]&&{id,...wk.shiftsUsed[id]})||null}
+function weekStats(wk){let hours=0,people=new Set();if(!wk)return{hours,people:0,filled:0};let filled=0;
+  for(const sid in wk.cells||{})for(const d in wk.cells[sid]){const v=wk.cells[sid][d];if(!v)continue;filled++;const sh=shiftFor(v,wk);hours+=shiftHours(sh);if(sh&&sh.kind!=='off')people.add(sid)}
+  return{hours,people:people.size,filled}}
+
+/* ---------- writes ---------- */
+function queue(w,patch){pending[w]=deepMerge(pending[w]||{},patch);render();clearTimeout(flushTimer);flushTimer=setTimeout(flush,500)}
+async function flush(){
+  if(flushing||!S.db)return;const ids=Object.keys(pending);if(!ids.length)return;
+  flushing=true;S.saving=true;setSaving();
+  const w=ids[0];const patch=pending[w];delete pending[w];
+  patch.updatedAt=Date.now();
+  try{
+    // merge:true deep-merges nested maps and creates the week on first edit
+    await S.db.doc('weeks/'+w).set(deepMerge({weekStart:w},patch),{merge:true});
+  }catch(e){handleWriteError(e);}
+  flushing=false;S.saving=Object.keys(pending).length>0;setSaving();
+  if(Object.keys(pending).length)flush();
+}
+function handleWriteError(e){
+  if(e&&e.code==='permission-denied'){S.readOnly=true;S.canWrite=false;pending={};render();toast('This account is not allowed to edit, so changes were not saved');}
+  else if(e&&e.code==='resource-exhausted'){toast('Daily free limit reached. Try again tomorrow.');}
+  else{console.error(e);toast('Could not save. Check your connection and try again.');}
+}
+async function writeDoc(path,data,mode){
+  if(!S.canWrite){toast(S.authUser?'This account can only view':'Sign in to edit');return}
+  try{const ref=S.db.doc(path);mode==='update'?await ref.update(data):mode==='delete'?await ref.delete():await ref.set(data)}catch(e){handleWriteError(e)}
+}
+function setSaving(){const el=document.getElementById('savestate');if(el)el.textContent=S.saving?'Saving…':(S.weeks[S.week]?'Saved':'')}
+
+/* ---------- cell edits ---------- */
+function snapshotFor(sid,shiftId){const p=S.staff.find(x=>x.id===sid);const patch={people:{}};if(p)patch.people[sid]={name:p.name,role:p.role||''};
+  if(shiftId){const sh=S.shifts.find(s=>s.id===shiftId);if(sh)patch.shiftsUsed={[shiftId]:{name:sh.name,code:sh.code,start:sh.start||'',end:sh.end||'',kind:sh.kind||'work',color:sh.color??0}}}return patch}
+function setCell(sid,date,shiftId){
+  const wk=weekView(S.week);if(wk&&wk.locked)return;if(!S.canWrite)return;
+  const cur=wk&&wk.cells&&wk.cells[sid]?wk.cells[sid][date]:null;if((cur||null)===(shiftId||null))return;
+  queue(S.week,deepMerge({cells:{[sid]:{[date]:shiftId||null}}},snapshotFor(sid,shiftId)));
+}
+
+/* ---------- render ---------- */
+function render(){
+  document.querySelectorAll('nav.tabs a').forEach(a=>a.setAttribute('aria-current',a.dataset.v===S.view?'page':'false'));
+  const ae=document.activeElement;
+  if((S.view==='team'||S.view==='shifts')&&ae&&ae.closest('#main')&&/INPUT|SELECT|TEXTAREA/.test(ae.tagName)){deferred=true;return}
+  if(S.view==='roster'&&ae&&ae.id==='notes'){deferred=true;renderGridOnly();return}
+  deferred=false;
+  const m=document.getElementById('main');
+  renderAuth();
+  if(!S.db){m.innerHTML=S.unavailable?`<div class="panel"><div class="empty"><h3>The roster couldn't start</h3><p>The Firebase scripts didn't load. Check the internet connection and reload the page.</p></div></div>`:m.innerHTML;return}
+  if(S.readDenied){m.innerHTML=`<div class="panel"><div class="empty"><h3>Sign in to see the roster</h3><p>This roster is only visible to signed-in team members.</p>${S.authUser?`<p>Signed in as ${esc(S.authUser.email)}, which doesn't have access. Ask the manager to add it.</p>`:'<button class="btn primary" data-act="signin">Sign in with Google</button>'}</div></div>`;return}
+  m.innerHTML=banner()+(S.view==='roster'?rosterHTML():S.view==='history'?historyHTML():S.view==='team'?teamHTML():shiftsHTML());
+  setSaving();
+}
+function renderGridOnly(){const g=document.getElementById('gridslot');if(g)g.innerHTML=gridHTML(weekView(S.week))}
+function banner(){
+  let h='';
+  if(S.authReady&&!S.authUser&&S.view!=='history')h+=`<div class="notice"><span class="grow">You're viewing the roster. Managers sign in to make changes.</span><button class="btn" data-act="signin">Sign in with Google</button></div>`;
+  if(S.authUser&&S.readOnly)h+=`<div class="notice warn"><span class="grow">${esc(S.authUser.email)} can view but not edit. Ask the manager to add this email to the editor list, or sign in with a different account.</span><button class="btn" data-act="signout">Switch account</button></div>`;
+  if(S.stale)h+=`<div class="notice"><span class="grow">Saved data can't be reached yet. What you see may be out of date; it will refresh on its own.</span></div>`;
+  return h;
+}
+
+function rosterHTML(){
+  const wk=weekView(S.week);const locked=!!(wk&&wk.locked);const st=weekStats(wk);
+  const status=!wk||!st.filled?'<span class="pill empty">Not started</span>':locked?'<span class="pill locked">Final</span>':'<span class="pill draft">Draft</span>';
+  const isThis=S.week===mondayOf(new Date());
+  let h=`<section class="weekbar">
+    <div class="navgroup">
+      <button class="btn icon-btn" data-act="prev" aria-label="Previous week">‹</button>
+      <button class="btn icon-btn" data-act="next" aria-label="Next week">›</button>
+      ${isThis?'':'<button class="btn ghost" data-act="thisweek">This week</button>'}
+    </div>
+    <div><h1>${rangeLabel(S.week)}</h1><div class="sub">Week of Mon ${parse(S.week).getDate()} ${MONTHS[parse(S.week).getMonth()]} · ${st.people} working · ${fmtH(st.hours)} scheduled · <span id="savestate" class="saving"></span></div></div>
+    <div class="grow"></div>${status}
+    <div class="actions">
+      <button class="btn" data-act="copyprev" ${locked||!S.canWrite?'disabled':''}>Copy last week</button>
+      <button class="btn" data-act="wa">Copy for WhatsApp</button>
+      <button class="btn ${locked?'':'primary'}" data-act="lock" ${!S.canWrite||!st.filled?'disabled':''}>${locked?'Unlock to edit':'Mark as final'}</button>
+      ${locked?'':`<button class="btn ghost danger" data-act="clear" ${!S.canWrite||!st.filled?'disabled':''}>Clear</button>`}
+    </div></section>`;
+  if(S.confirm==='copy'){h+=`<div class="notice warn"><span class="grow">This week already has shifts. Replace them with last week's roster?</span><button class="btn" data-act="copyprev-yes">Replace</button><button class="btn ghost" data-act="cancel">Cancel</button></div>`}
+  if(S.confirm==='clear'){h+=`<div class="notice warn"><span class="grow">Clear every shift in this week? Notes stay.</span><button class="btn" data-act="clear-yes">Clear week</button><button class="btn ghost" data-act="cancel">Cancel</button></div>`}
+  if(locked)h+=`<div class="notice"><span class="grow">This week is marked final, so cells are locked. Unlock it to make changes.</span></div>`;
+  if(S.loaded.shifts&&!S.shifts.length)h+=`<div class="notice warn"><span class="grow">No shift types yet. Add Opening, Closing, Off and the rest first.</span><a class="btn" href="#shifts">Set up shifts</a></div>`;
+  if(!locked&&S.canWrite&&S.shifts.length){
+    h+=`<div class="palette" role="toolbar" aria-label="Shift brush"><span class="lbl">Brush</span>`+
+    sortedShifts().map(s=>`<button class="chip" data-brush="${esc(s.id)}" aria-pressed="${S.brush===s.id}"><span class="code c${s.color??0}">${esc(s.code)}</span>${esc(s.name)}${s.kind!=='off'&&s.start?`<span class="t">${esc(s.start)}–${esc(s.end)}</span>`:''}</button>`).join('')+
+    `<button class="chip erase" data-brush="__erase" aria-pressed="${S.brush==='__erase'}"><span class="code">✕</span>Erase</button>
+    <span class="hint">${S.brush?'Tap or drag across cells to paint · Esc to drop the brush':'Pick a brush, or tap any cell to choose'}</span></div>`;
+  }
+  h+=`<div id="gridslot">${gridHTML(wk)}</div>`;
+  h+=`<div class="notes"><label for="notes">Notes for this week</label><textarea id="notes" placeholder="Leave requests, swaps, events, who covers if someone is sick…" ${locked||!S.canWrite?'readonly':''}>${esc(wk&&wk.notes||'')}</textarea></div>`;
+  return h;
+}
+function rowsFor(wk){
+  const active=sortedStaff().filter(p=>p.active!==false);const ids=new Set(active.map(p=>p.id));const extra=[];
+  for(const sid in (wk&&wk.cells)||{}){if(ids.has(sid))continue;if(Object.values(wk.cells[sid]).some(Boolean)){const p=S.staff.find(x=>x.id===sid);const snap=wk.people&&wk.people[sid];extra.push({id:sid,name:(p&&p.name)||(snap&&snap.name)||'Former staff',role:(p&&p.role)||(snap&&snap.role)||'',archived:true})}}
+  return[...active,...extra];
+}
+function gridHTML(wk){
+  if(!S.loaded.staff)return`<div class="panel"><div class="empty"><p>Loading team…</p></div></div>`;
+  const rows=rowsFor(wk);
+  if(!rows.length)return`<div class="panel"><div class="empty"><h3>Add your team to start the roster</h3><p>Each person becomes a row. Add names and roles once; every week reuses them.</p><a class="btn primary" href="#team">Add team members</a></div></div>`;
+  const dates=weekDates(S.week),t=todayIso(),locked=!!(wk&&wk.locked);
+  let h=`<div class="gridbox"><table class="grid" id="grid"><thead><tr><th class="who" scope="col">Team</th>`+
+    dates.map((d,i)=>`<th scope="col" class="${d===t?'today':''}"><span class="dn">${DAYS[i]}</span><span class="dd">${parse(d).getDate()}</span></th>`).join('')+`<th class="tot" scope="col">Hours</th></tr></thead><tbody>`;
+  // group by role
+  const groups=[];const gi={};
+  rows.forEach(p=>{const r=(p.role||'').trim()||'Team';if(!(r in gi)){gi[r]=groups.length;groups.push({r,ps:[]})}groups[gi[r]].ps.push(p)});
+  const showGrp=groups.length>1;
+  for(const g of groups){
+    if(showGrp)h+=`<tr class="grp"><td class="who">${esc(g.r)}</td><td colspan="8"></td></tr>`;
+    for(const p of g.ps){let hrs=0,offs=0;
+      h+=`<tr><th class="who" scope="row"><span class="nm">${esc(p.name)}${p.archived?'<span class="arch">left</span>':''}</span>${showGrp?'':`<span class="rl">${esc(p.role||'')}</span>`}</th>`;
+      for(const d of dates){const v=wk&&wk.cells&&wk.cells[p.id]?wk.cells[p.id][d]:null;const sh=v?shiftFor(v,wk):null;
+        if(sh){hrs+=shiftHours(sh);if(sh.kind==='off')offs++}
+        h+=`<td class="cell${d===t?' today':''}${locked||!S.canWrite?' locked':''}" data-s="${esc(p.id)}" data-d="${d}" ${locked||!S.canWrite?'':'tabindex="0"'} aria-label="${esc(p.name)} ${d}: ${sh?esc(sh.name):'no shift'}">`+
+          (sh?`<div class="sh c${sh.color??0}">${esc(sh.code)}${sh.kind!=='off'&&sh.start?`<span class="tm">${esc(sh.start)}–${esc(sh.end)}</span>`:''}</div>`:`<span class="empty-dot">·</span>`)+`</td>`}
+      h+=`<td class="tot">${fmtH(hrs)}<span class="d">${offs} off</span></td></tr>`;
+    }
+  }
+  // coverage
+  h+=`</tbody><tfoot><tr><td class="who">On shift</td>`;
+  for(const d of dates){const counts={};let n=0;
+    for(const p of rows){const v=wk&&wk.cells&&wk.cells[p.id]?wk.cells[p.id][d]:null;const sh=v?shiftFor(v,wk):null;if(sh&&sh.kind!=='off'){n++;counts[sh.id]=(counts[sh.id]||0)+1}}
+    h+=`<td><span class="hc ${n?'':'zero'}">${n}</span><span class="br">`+sortedShifts().filter(s=>counts[s.id]).map(s=>`<span class="c${s.color??0}">${esc(s.code)} ${counts[s.id]}</span>`).join('')+`</span></td>`}
+  h+=`<td></td></tr></tfoot></table></div>`;return h;
+}
+
+function historyHTML(){
+  const ws=Object.keys(S.weeks).filter(w=>weekStats(S.weeks[w]).filled||S.weeks[w].notes).sort().reverse();
+  let h=`<div class="panel"><div class="panel-h"><h2>Roster history</h2><p>Every week you build is kept here. Open one to view it or reuse it.</p></div>`;
+  if(!S.loaded.weeks)return h+`<div class="empty"><p>Loading saved weeks…</p></div></div>`;
+  if(!ws.length)return h+`<div class="empty"><h3>No saved weeks yet</h3><p>Weeks appear here as soon as the first shift is placed.</p><a class="btn primary" href="#roster">Build this week</a></div></div>`;
+  let yr=null;h+='<div class="hist">';
+  for(const w of ws){const y=w.slice(0,4);if(y!==yr){yr=y;h+=`<div class="yr">${y}</div>`}
+    const wk=S.weeks[w],st=weekStats(wk);const upd=wk.updatedAt?new Date(wk.updatedAt):null;
+    h+=`<button class="hrow" data-open="${w}"><span><span class="rng">${rangeLabel(w)}</span><br><span class="meta">${upd?'Edited '+upd.getDate()+' '+MONTHS[upd.getMonth()]+', '+pad(upd.getHours())+':'+pad(upd.getMinutes()):''}${w===mondayOf(new Date())?' · this week':''}</span></span>
+      <span class="num hide-sm">${st.people} people</span><span class="num hide-sm">${fmtH(st.hours)}</span>${wk.locked?'<span class="pill locked">Final</span>':'<span class="pill draft">Draft</span>'}</button>`}
+  return h+'</div></div>';
+}
+
+function teamHTML(){
+  const all=sortedStaff();const act=all.filter(p=>p.active!==false),arc=all.filter(p=>p.active===false);
+  let h=`<div class="panel"><div class="panel-h"><h2>Team</h2><p>Rows on the roster, in this order. Roles group people on the grid. Archive someone who leaves: their past weeks stay intact.</p></div><div class="rows">`;
+  if(!S.loaded.staff)h+=`<div class="empty"><p>Loading…</p></div>`;
+  else if(!all.length)h+=`<div class="empty"><h3>No one added yet</h3><p>Add each person who works shifts, with their role.</p></div>`;
+  const row=(p,i,list)=>`<div class="row${p.active===false?' off':''}">
+    <input type="text" class="nm" id="st-n-${esc(p.id)}" data-staff="${esc(p.id)}" data-f="name" value="${esc(p.name)}" aria-label="Name" ${S.canWrite?'':'readonly'}>
+    <input type="text" class="rl" id="st-r-${esc(p.id)}" data-staff="${esc(p.id)}" data-f="role" value="${esc(p.role||'')}" list="roles" placeholder="Role" aria-label="Role" ${S.canWrite?'':'readonly'}>
+    ${p.active===false?'':`<button class="btn icon-btn ghost" data-mv="${esc(p.id)}" data-dir="-1" aria-label="Move up" ${i===0||!S.canWrite?'disabled':''}>↑</button><button class="btn icon-btn ghost" data-mv="${esc(p.id)}" data-dir="1" aria-label="Move down" ${i===list.length-1||!S.canWrite?'disabled':''}>↓</button>`}
+    <button class="btn ghost" data-arch="${esc(p.id)}" ${S.canWrite?'':'disabled'}>${p.active===false?'Restore':'Archive'}</button></div>`;
+  h+=act.map((p,i)=>row(p,i,act)).join('');
+  if(arc.length)h+=`<div class="yr">Archived</div>`+arc.map((p,i)=>row(p,i,arc)).join('');
+  h+=`</div>${S.canWrite?`<form class="addrow" id="addstaff"><input type="text" id="new-name" placeholder="Name" required style="flex:1 1 180px"><input type="text" id="new-role" list="roles" placeholder="Role (e.g. Barista)" style="flex:0 1 180px"><button class="btn primary" type="submit">Add person</button></form>`:''}</div>
+  <datalist id="roles">${ROLE_SUGGEST.map(r=>`<option value="${r}">`).join('')}</datalist>`;
+  return h;
+}
+
+function shiftsHTML(){
+  const list=sortedShifts();
+  let h=`<div class="panel"><div class="panel-h"><h2>Shift types</h2><p>The brushes on the roster. Set the times once and hours add up on their own. Use "Day off" for Off, Leave and Sick so they count zero hours.</p></div><div class="rows">`;
+  if(!S.loaded.shifts)h+=`<div class="empty"><p>Loading…</p></div>`;
+  else if(!list.length)h+=`<div class="empty"><h3>No shift types yet</h3><p>Start with the usual set (Opening, Middle, Closing, Off, Leave, Sick) and adjust the times, or add your own below.</p>${S.canWrite?'<button class="btn primary" data-act="starter">Add starter shifts</button>':''}</div>`;
+  h+=list.map((s,i)=>`<div class="row">
+    <input type="text" class="cd" id="sh-c-${esc(s.id)}" data-shift="${esc(s.id)}" data-f="code" value="${esc(s.code)}" maxlength="4" aria-label="Short code" ${S.canWrite?'':'readonly'}>
+    <input type="text" class="nm" id="sh-n-${esc(s.id)}" data-shift="${esc(s.id)}" data-f="name" value="${esc(s.name)}" aria-label="Shift name" ${S.canWrite?'':'readonly'}>
+    <select id="sh-k-${esc(s.id)}" data-shift="${esc(s.id)}" data-f="kind" aria-label="Type" ${S.canWrite?'':'disabled'}><option value="work" ${s.kind!=='off'?'selected':''}>Working</option><option value="off" ${s.kind==='off'?'selected':''}>Day off</option></select>
+    ${s.kind==='off'?'':`<input type="time" class="time" id="sh-s-${esc(s.id)}" data-shift="${esc(s.id)}" data-f="start" value="${esc(s.start||'')}" aria-label="Start" ${S.canWrite?'':'readonly'}><input type="time" class="time" id="sh-e-${esc(s.id)}" data-shift="${esc(s.id)}" data-f="end" value="${esc(s.end||'')}" aria-label="End" ${S.canWrite?'':'readonly'}><span class="dur">${fmtH(shiftHours(s))}</span>`}
+    <span class="swatches" role="group" aria-label="Colour">${[0,1,2,3,4,5,6,7].map(c=>`<button class="c${c}" data-color="${c}" data-sid="${esc(s.id)}" aria-pressed="${(s.color??0)===c}" aria-label="Colour ${c+1}" ${S.canWrite?'':'disabled'}></button>`).join('')}</span>
+    <button class="btn icon-btn ghost" data-smv="${esc(s.id)}" data-dir="-1" aria-label="Move up" ${i===0||!S.canWrite?'disabled':''}>↑</button>
+    <button class="btn icon-btn ghost" data-smv="${esc(s.id)}" data-dir="1" aria-label="Move down" ${i===list.length-1||!S.canWrite?'disabled':''}>↓</button>
+    <button class="btn ghost danger" data-sdel="${esc(s.id)}" ${S.canWrite?'':'disabled'}>Delete</button></div>`).join('');
+  h+=`</div>${S.canWrite?`<form class="addrow" id="addshift"><input type="text" id="ns-code" placeholder="Code" maxlength="4" required style="width:80px;text-transform:uppercase"><input type="text" id="ns-name" placeholder="Shift name" required style="flex:1 1 160px"><input type="time" id="ns-start" aria-label="Start"><input type="time" id="ns-end" aria-label="End"><button class="btn primary" type="submit">Add shift</button></form>`:''}
+  <div class="notice" style="margin:0 18px 16px"><span class="grow">Deleting a shift type keeps it on past weeks that used it; it just disappears from the brush list.</span></div></div>`;
+  return h;
+}
+
+/* ---------- WhatsApp text ---------- */
+function waText(){
+  const wk=weekView(S.week);const rows=rowsFor(wk);const dates=weekDates(S.week);
+  let out=`*Roster ${rangeLabel(S.week)}*\n`;
+  dates.forEach((d,i)=>{out+=`\n*${DAYS[i]} ${parse(d).getDate()}/${parse(d).getMonth()+1}*\n`;const by={};const offs=[];
+    for(const p of rows){const v=wk&&wk.cells&&wk.cells[p.id]?wk.cells[p.id][d]:null;const sh=v?shiftFor(v,wk):null;if(!sh)continue;if(sh.kind==='off'){offs.push(p.name+(sh.code&&sh.name.toLowerCase()!=='off'?` (${sh.name})`:''));continue}(by[sh.id]=by[sh.id]||{sh,ns:[]}).ns.push(p.name)}
+    const ordered=Object.values(by).sort((a,b)=>(mins(a.sh.start)??0)-(mins(b.sh.start)??0));
+    if(!ordered.length&&!offs.length)out+='–\n';
+    ordered.forEach(g=>out+=`${g.sh.name}${g.sh.start?` ${g.sh.start}-${g.sh.end}`:''}: ${g.ns.join(', ')}\n`);
+    if(offs.length)out+=`Off: ${offs.join(', ')}\n`;});
+  if(wk&&wk.notes)out+=`\n_Notes:_ ${wk.notes}\n`;return out;
+}
+
+/* ---------- popover ---------- */
+let popCtx=null;
+function openPop(cell){
+  const pop=document.getElementById('pop');const sid=cell.dataset.s,d=cell.dataset.d;const p=rowsFor(weekView(S.week)).find(x=>x.id===sid);
+  popCtx={sid,d};const dt=parse(d);
+  pop.innerHTML=`<div class="ph">${esc(p?p.name:'')} · ${DAYS[(dt.getDay()+6)%7]} ${dt.getDate()} ${MONTHS[dt.getMonth()]}</div>`+
+    sortedShifts().map(s=>`<button data-pick="${esc(s.id)}"><span class="code c${s.color??0}">${esc(s.code)}</span>${esc(s.name)}${s.kind!=='off'&&s.start?`<span class="t">${esc(s.start)}–${esc(s.end)}</span>`:''}</button>`).join('')+
+    `<button data-pick=""><span class="code" style="background:var(--sunk);color:var(--muted)">✕</span>Clear</button>`;
+  pop.hidden=false;const r=cell.getBoundingClientRect();const pw=pop.offsetWidth,ph=pop.offsetHeight;
+  let left=r.left+window.scrollX+r.width/2-pw/2;left=Math.max(window.scrollX+8,Math.min(left,window.scrollX+document.documentElement.clientWidth-pw-8));
+  let top=r.bottom+window.scrollY+4;if(r.bottom+ph+8>window.innerHeight&&r.top-ph-4>0)top=r.top+window.scrollY-ph-4;
+  pop.style.left=left+'px';pop.style.top=top+'px';const first=pop.querySelector('button');first&&first.focus();
+}
+function closePop(){document.getElementById('pop').hidden=true;popCtx=null}
+
+/* ---------- events ---------- */
+let painting=false;
+function paintAt(cell){if(!cell||!S.brush)return;setCell(cell.dataset.s,cell.dataset.d,S.brush==='__erase'?null:S.brush)}
+document.addEventListener('pointerdown',e=>{
+  const pop=document.getElementById('pop');if(!pop.hidden&&!pop.contains(e.target))closePop();
+  const cell=e.target.closest('td.cell');if(!cell||cell.classList.contains('locked'))return;
+  if(S.brush){e.preventDefault();painting=e.pointerType==='mouse';const v=weekView(S.week);const cur=v&&v.cells&&v.cells[cell.dataset.s]?v.cells[cell.dataset.s][cell.dataset.d]:null;
+    if(!painting&&cur&&cur===S.brush){setCell(cell.dataset.s,cell.dataset.d,null);return}
+    paintAt(cell);}
+});
+document.addEventListener('pointermove',e=>{if(!painting)return;const el=document.elementFromPoint(e.clientX,e.clientY);const cell=el&&el.closest('td.cell');if(cell&&!cell.classList.contains('locked'))paintAt(cell)});
+document.addEventListener('pointerup',()=>painting=false);
+document.addEventListener('click',e=>{
+  const t=e.target;
+  const cell=t.closest('td.cell');if(cell&&!cell.classList.contains('locked')&&!S.brush){openPop(cell);return}
+  const pick=t.closest('[data-pick]');if(pick&&popCtx){setCell(popCtx.sid,popCtx.d,pick.dataset.pick||null);closePop();return}
+  const br=t.closest('[data-brush]');if(br){S.brush=S.brush===br.dataset.brush?null:br.dataset.brush;render();return}
+  const op=t.closest('[data-open]');if(op){S.week=op.dataset.open;location.hash='roster';go();return}
+  const a=t.closest('[data-act]');if(a&&!a.disabled)act(a.dataset.act);
+  const mv=t.closest('[data-mv]');if(mv&&!mv.disabled)reorder('staff',mv.dataset.mv,+mv.dataset.dir);
+  const smv=t.closest('[data-smv]');if(smv&&!smv.disabled)reorder('shifts',smv.dataset.smv,+smv.dataset.dir);
+  const ar=t.closest('[data-arch]');if(ar&&!ar.disabled){const p=S.staff.find(x=>x.id===ar.dataset.arch);if(p)writeDoc('staff/'+p.id,{active:p.active===false},'update')}
+  const sd=t.closest('[data-sdel]');if(sd&&!sd.disabled){if(sd.dataset.armed){writeDoc('shifts/'+sd.dataset.sdel,null,'delete');if(S.brush===sd.dataset.sdel)S.brush=null}else{sd.dataset.armed='1';sd.textContent='Confirm delete';setTimeout(()=>{if(sd.isConnected){delete sd.dataset.armed;sd.textContent='Delete'}},3000)}}
+  const col=t.closest('[data-color]');if(col&&!col.disabled)writeDoc('shifts/'+col.dataset.sid,{color:+col.dataset.color},'update');
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if(!document.getElementById('pop').hidden){closePop();return}if(S.brush){S.brush=null;render()}if(S.confirm){S.confirm=null;render()}}
+  if((e.key==='Enter'||e.key===' ')&&e.target.matches('td.cell')){e.preventDefault();if(S.brush)paintAt(e.target);else openPop(e.target)}
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.dataset.staff){const v=t.value.trim();if(t.dataset.f==='name'&&!v){render();return}writeDoc('staff/'+t.dataset.staff,{[t.dataset.f]:v},'update')}
+  if(t.dataset.shift){let v=t.value;if(t.dataset.f==='code')v=v.trim().toUpperCase().slice(0,4);if(t.dataset.f==='name')v=v.trim();if((t.dataset.f==='code'||t.dataset.f==='name')&&!v){render();return}writeDoc('shifts/'+t.dataset.shift,{[t.dataset.f]:v},'update')}
+});
+let notesTimer=null;
+document.addEventListener('input',e=>{if(e.target.id==='notes'){const v=e.target.value;clearTimeout(notesTimer);notesTimer=setTimeout(()=>{pending[S.week]=deepMerge(pending[S.week]||{},{notes:v});flush()},700)}});
+document.addEventListener('focusout',()=>setTimeout(()=>{if(deferred)render()},0));
+document.addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(e.target.id==='addstaff'){const n=document.getElementById('new-name').value.trim();if(!n)return;const r=document.getElementById('new-role').value.trim();
+    const max=S.staff.reduce((m,p)=>Math.max(m,p.order??0),0);
+    try{await S.db.collection('staff').add({name:n,role:r,active:true,order:max+1});document.getElementById('new-name').value='';document.getElementById('new-name').focus();toast(n+' added')}catch(err){handleWriteError(err)}}
+  if(e.target.id==='addshift'){const code=document.getElementById('ns-code').value.trim().toUpperCase().slice(0,4),name=document.getElementById('ns-name').value.trim();if(!code||!name)return;
+    const start=document.getElementById('ns-start').value,end=document.getElementById('ns-end').value;const max=S.shifts.reduce((m,s)=>Math.max(m,s.order??0),0);
+    const used=new Set(S.shifts.map(s=>s.color));let color=[0,1,2,3,4,5,6,7].find(c=>!used.has(c));if(color==null)color=S.shifts.length%8;
+    try{await S.db.collection('shifts').add({code,name,start,end,kind:start?'work':'off',color,order:max+1});e.target.reset();toast(name+' added')}catch(err){handleWriteError(err)}}
+});
+async function reorder(kind,id,dir){
+  const list=kind==='staff'?sortedStaff().filter(p=>p.active!==false):sortedShifts();const i=list.findIndex(x=>x.id===id),j=i+dir;if(i<0||j<0||j>=list.length)return;
+  // normalise orders then swap
+  const ups=list.map((x,k)=>({x,o:k+1}));ups[i].o=j+1;ups[j].o=i+1;
+  for(const u of ups)if((u.x.order??0)!==u.o)await writeDoc(kind+'/'+u.x.id,{order:u.o},'update');
+}
+function act(a){
+  const wk=weekView(S.week);
+  if(a==='signin'){signIn();return}
+  if(a==='signout'){firebase.auth().signOut();return}
+  if(a==='starter'){const st=[['opening','OP','Opening','07:00','15:00','work',1],['middle','MID','Middle','11:00','19:00','work',5],['closing','CL','Closing','14:00','22:00','work',2],['off','OFF','Off','','','off',6],['leave','CUTI','Leave','','','off',3],['sick','SKT','Sick','','','off',4]];
+    const b=S.db.batch();st.forEach(([id,code,name,start,end,kind,color],i)=>b.set(S.db.doc('shifts/'+id),{code,name,start,end,kind,color,order:i+1}));
+    b.commit().then(()=>toast('Starter shifts added. Check the times.'),handleWriteError);return}
+  if(a==='prev'){S.week=addDays(S.week,-7);S.confirm=null;render()}
+  if(a==='next'){S.week=addDays(S.week,7);S.confirm=null;render()}
+  if(a==='thisweek'){S.week=mondayOf(new Date());S.confirm=null;render()}
+  if(a==='cancel'){S.confirm=null;render()}
+  if(a==='lock'){const st=weekStats(wk);if(!st.filled)return;pending[S.week]=deepMerge(pending[S.week]||{},{locked:!(wk&&wk.locked)});if(!(wk&&wk.locked))S.brush=null;render();flush();toast(wk&&wk.locked?'Unlocked for editing':'Marked as final')}
+  if(a==='copyprev'){const prev=weekView(addDays(S.week,-7));if(!prev||!weekStats(prev).filled){toast('Last week has no shifts to copy');return}
+    if(weekStats(wk).filled&&S.confirm!=='copy'){S.confirm='copy';render();return}copyPrev()}
+  if(a==='copyprev-yes'){copyPrev()}
+  if(a==='clear'){S.confirm='clear';render()}
+  if(a==='clear-yes'){const patch={cells:{}};for(const sid in (wk&&wk.cells)||{})for(const d in wk.cells[sid])if(wk.cells[sid][d])(patch.cells[sid]=patch.cells[sid]||{})[d]=null;S.confirm=null;queue(S.week,patch);toast('Week cleared')}
+  if(a==='wa'){const txt=waText();
+    const done=()=>toast('Copied. Paste it into WhatsApp');
+    try{navigator.clipboard.writeText(txt).then(done,()=>fallbackCopy(txt))}catch(_){fallbackCopy(txt)}}
+}
+function fallbackCopy(txt){const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(_){}ta.remove();toast(ok?'Copied. Paste it into WhatsApp':'Copy blocked by this browser. Select the text manually.')}
+function copyPrev(){
+  const prev=weekView(addDays(S.week,-7)),cur=weekView(S.week);const patch={cells:{},people:{},shiftsUsed:{}};
+  for(const sid in (cur&&cur.cells)||{})for(const d in cur.cells[sid])if(cur.cells[sid][d])(patch.cells[sid]=patch.cells[sid]||{})[d]=null;
+  const activeIds=new Set(S.staff.filter(p=>p.active!==false).map(p=>p.id));
+  for(const sid in prev.cells||{}){if(!activeIds.has(sid))continue;for(const d in prev.cells[sid]){const v=prev.cells[sid][d];if(!v)continue;(patch.cells[sid]=patch.cells[sid]||{})[addDays(d,7)]=v;deepMerge(patch,snapshotFor(sid,v));if(prev.shiftsUsed&&prev.shiftsUsed[v]&&!S.shifts.find(s=>s.id===v))patch.shiftsUsed[v]=prev.shiftsUsed[v]}}
+  S.confirm=null;queue(S.week,patch);toast("Copied last week's roster");
+}
+
+/* ---------- routing ---------- */
+const VIEWS=['roster','history','team','shifts'];
+function go(){const h=location.hash.slice(1);S.view=VIEWS.includes(h)?h:'roster';closePop();render();window.scrollTo(0,0)}
+window.addEventListener('hashchange',go);
+function measureHdr(){document.documentElement.style.setProperty('--hdr',document.getElementById('hdr').offsetHeight+'px')}
+window.addEventListener('resize',measureHdr);measureHdr();
+
+/* ---------- auth ---------- */
+function renderAuth(){const el=document.getElementById('auth');if(!el)return;
+  if(!S.authReady){el.innerHTML='';return}
+  el.innerHTML=S.authUser?`<span class="who-in" title="${esc(S.authUser.email)}">${esc(S.authUser.email)}</span><button class="btn ghost" data-act="signout">Sign out</button>`
+    :`<button class="btn" data-act="signin">Sign in</button>`;
+  measureHdr();}
+async function signIn(){
+  const prov=new firebase.auth.GoogleAuthProvider();prov.setCustomParameters({prompt:'select_account'});
+  try{await firebase.auth().signInWithPopup(prov)}
+  catch(e){
+    if(e&&(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment')){try{await firebase.auth().signInWithRedirect(prov)}catch(e2){toast('Sign-in failed: '+(e2.code||'unknown error'))}}
+    else if(e&&e.code==='auth/unauthorized-domain'){toast('This website address isn\'t allowed yet. Add it under Firebase Authentication > Settings > Authorized domains.')}
+    else if(e&&(e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request')){}
+    else toast('Sign-in failed: '+(e&&e.code||'unknown error'));
+  }}
+
+/* ---------- boot ---------- */
+let unsubs=[];
+function subscribe(){
+  unsubs.forEach(u=>u());unsubs=[];S.readDenied=false;
+  const db=S.db;
+  const timer=setTimeout(()=>{S.stale=true;render()},10000);
+  const done=()=>{if(S.loaded.staff&&S.loaded.shifts&&S.loaded.weeks){clearTimeout(timer);S.stale=false}};
+  const onErr=e=>{clearTimeout(timer);if(e&&e.code==='permission-denied'){S.readDenied=true;render();return}console.error(e);toast('Lost connection to saved data. Reload to reconnect.')};
+  unsubs.push(db.collection('staff').onSnapshot(s=>{S.staff=s.docs.map(d=>({id:d.id,...d.data()}));S.loaded.staff=S.loaded.staff||!s.metadata.fromCache||s.size>0;done();render()},onErr));
+  unsubs.push(db.collection('shifts').onSnapshot(s=>{S.shifts=s.docs.map(d=>({id:d.id,...d.data()}));S.loaded.shifts=S.loaded.shifts||!s.metadata.fromCache||s.size>0;done();render()},onErr));
+  unsubs.push(db.collection('weeks').orderBy('weekStart','desc').limit(500).onSnapshot(s=>{const m={};s.docs.forEach(d=>m[d.id]=d.data());S.weeks=m;S.loaded.weeks=S.loaded.weeks||!s.metadata.fromCache||s.size>0;done();render()},onErr));
+}
+(function(){
+  S.view=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'roster';
+  if(!window.firebase){S.unavailable=true;render();return}
+  firebase.initializeApp(firebaseConfig);
+  const db=firebase.firestore();
+  try{db.enablePersistence({synchronizeTabs:true}).catch(()=>{})}catch(_){}
+  S.db=db;
+  firebase.auth().getRedirectResult().catch(e=>{if(e&&e.code)toast('Sign-in failed: '+e.code)});
+  let first=true;
+  firebase.auth().onAuthStateChanged(u=>{
+    S.authUser=u?{email:u.email,uid:u.uid}:null;S.authReady=true;S.readOnly=false;S.canWrite=!!u;if(!u)S.brush=null;
+    if(first||S.readDenied){first=false;subscribe()}  // re-subscribe so "sign-in to view" setups load after signing in
+    render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>

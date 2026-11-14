@@ -172,6 +172,36 @@ textarea{width:100%;min-height:70px;border:1px solid var(--line);background:var(
 .empty h3{font-family:var(--f-display);font-size:20px;margin:0}
 .empty p{margin:0;color:var(--muted);max-width:46ch}
 
+/* Export sheet: rendered off-screen at a fixed desktop width, always light, then captured as an image */
+#xsheet{position:fixed;left:-20000px;top:0;width:1180px;padding:36px 40px 30px;background:#ffffff;color:#1b211e;font-family:var(--f-body);font-size:14px;line-height:1.35}
+#xsheet .xh{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;border-bottom:2px solid #17594c;padding-bottom:14px;margin-bottom:18px}
+#xsheet .xk{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#17594c}
+#xsheet .xt{font-family:var(--f-display);font-weight:800;font-size:32px;letter-spacing:-.02em;margin-top:2px}
+#xsheet .xm{text-align:right;font-size:12px;color:#5d6760}
+#xsheet .xs{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px;margin-bottom:4px}
+#xsheet .xs.f{background:#dcecd9;color:#2b6b33}#xsheet .xs.d{background:#f6e3d2;color:#9a4a12}
+#xsheet table{width:100%;border-collapse:collapse;table-layout:fixed;font-variant-numeric:tabular-nums}
+#xsheet th,#xsheet td{border:1px solid #cfd4cd;padding:0;text-align:center}
+#xsheet thead th{background:#eef0ec;padding:8px 4px;font-weight:600}
+#xsheet thead .dn{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#5d6760}
+#xsheet thead .dd{display:block;font-family:var(--f-display);font-weight:800;font-size:19px}
+#xsheet .xw{text-align:left;padding:8px 12px;width:180px;font-weight:700}
+#xsheet .xw small{display:block;font-weight:500;font-size:11px;color:#5d6760}
+#xsheet .xg td{background:#f4f5f2;text-align:left;padding:5px 12px;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#5d6760}
+#xsheet .xc{height:50px}
+#xsheet .xp{margin:5px;border-radius:6px;padding:6px 2px;font-weight:700;font-size:13px}
+#xsheet .xp i{display:block;font-style:normal;font-family:var(--f-mono);font-size:10px;font-weight:500;opacity:.85}
+#xsheet .xtot{width:74px;font-weight:700;font-size:13px}
+#xsheet .xtot small{display:block;font-weight:500;font-size:11px;color:#5d6760}
+#xsheet tfoot td{background:#eef0ec;padding:6px 4px;font-size:12px;vertical-align:top}
+#xsheet tfoot b{font-family:var(--f-display);font-size:17px;display:block}
+#xsheet .xn{margin-top:16px;padding:12px 14px;background:#f4f5f2;border-radius:8px;white-space:pre-wrap}
+#xsheet .xn span{display:block;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#5d6760;margin-bottom:4px}
+#xsheet .xl{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:14px;font-size:12px;color:#5d6760;align-items:center}
+#xsheet .xl b{font-family:var(--f-mono);font-size:11px;border-radius:4px;padding:2px 6px;margin-right:4px}
+#xsheet .xf{margin-top:14px;font-size:11px;color:#8a938d;display:flex;justify-content:space-between}
+#xsheet .k0{background:#d9ead3;color:#244a1c}#xsheet .k1{background:#fde7b4;color:#6b4800}#xsheet .k2{background:#d3e3f6;color:#173f6b}#xsheet .k3{background:#ecd6f0;color:#5b2266}
+#xsheet .k4{background:#f8d5cd;color:#7a2614}#xsheet .k5{background:#cfeee9;color:#11524a}#xsheet .k6{background:#e6e3dc;color:#4a4740}#xsheet .k7{background:#f3d9e4;color:#73213f}
 .toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-weight:600;font-size:13px;z-index:30}
 .saving{font-size:12px;color:var(--muted)}
 
@@ -348,6 +378,8 @@ function rosterHTML(){
     <div class="actions">
       <button class="btn" data-act="copyprev" ${locked||!S.canWrite?'disabled':''}>Copy last week</button>
       <button class="btn" data-act="wa">Copy for WhatsApp</button>
+      <button class="btn" data-act="exp-png" ${st.filled?'':'disabled'} title="Save the whole week as a picture">Save image</button>
+      <button class="btn" data-act="exp-pdf" ${st.filled?'':'disabled'} title="Save the whole week as a PDF">Save PDF</button>
       <button class="btn ${locked?'':'primary'}" data-act="lock" ${!S.canWrite||!st.filled?'disabled':''}>${locked?'Unlock to edit':'Mark as final'}</button>
       ${locked?'':`<button class="btn ghost danger" data-act="clear" ${!S.canWrite||!st.filled?'disabled':''}>Clear</button>`}
     </div></section>`;
@@ -450,6 +482,70 @@ function shiftsHTML(){
 }
 
 /* ---------- WhatsApp text ---------- */
+/* ---------- export (image / PDF) ----------
+   Read-only: builds a separate sheet from the week as shown on screen (saved data + any edit still saving),
+   captures it, and never writes to the database or changes the page. */
+const LIBS={h2c:'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',pdf:'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'};
+function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>no(new Error('load'));document.head.appendChild(s)})}
+async function needLib(kind){if(kind==='h2c'&&window.html2canvas)return;if(kind==='pdf'&&window.jspdf)return;await loadScript(LIBS[kind])}
+function exportSheetHTML(){
+  const wk=weekView(S.week),rows=rowsFor(wk),dates=weekDates(S.week),st=weekStats(wk),locked=!!(wk&&wk.locked);
+  const groups=[],gi={};rows.forEach(p=>{const r=(p.role||'').trim()||'Team';if(!(r in gi)){gi[r]=groups.length;groups.push({r,ps:[]})}groups[gi[r]].ps.push(p)});
+  const multi=groups.length>1,now=new Date();
+  let h=`<div class="xh"><div><div class="xk">Statement Coffee · Kuta · Staff roster</div><div class="xt">${rangeLabel(S.week)}</div></div>
+    <div class="xm"><span class="xs ${locked?'f':'d'}">${locked?'Final':'Draft'}</span><br>${st.people} working · ${fmtH(st.hours)} scheduled</div></div>
+    <table><thead><tr><th class="xw" style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#5d6760">Team</th>`+
+    dates.map((d,i)=>`<th><span class="dn">${DAYS[i]}</span><span class="dd">${parse(d).getDate()}</span></th>`).join('')+`<th class="xtot">Hours</th></tr></thead><tbody>`;
+  const used=new Map();
+  for(const g of groups){
+    if(multi)h+=`<tr class="xg"><td colspan="9">${esc(g.r)}</td></tr>`;
+    for(const p of g.ps){let hrs=0,offs=0;
+      h+=`<tr><td class="xw">${esc(p.name)}${multi?'':`<small>${esc(p.role||'')}</small>`}</td>`;
+      for(const d of dates){const v=wk&&wk.cells&&wk.cells[p.id]?wk.cells[p.id][d]:null;const sh=v?shiftFor(v,wk):null;
+        if(sh){hrs+=shiftHours(sh);if(sh.kind==='off')offs++;used.set(sh.id||v,sh)}
+        h+=`<td class="xc">${sh?`<div class="xp k${sh.color??0}">${esc(sh.code)}${sh.kind!=='off'&&sh.start?`<i>${esc(sh.start)}–${esc(sh.end)}</i>`:''}</div>`:''}</td>`}
+      h+=`<td class="xtot">${fmtH(hrs)}<small>${offs} off</small></td></tr>`}}
+  h+=`</tbody><tfoot><tr><td class="xw" style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#5d6760">On shift</td>`;
+  for(const d of dates){let n=0;for(const p of rows){const v=wk&&wk.cells&&wk.cells[p.id]?wk.cells[p.id][d]:null;const sh=v?shiftFor(v,wk):null;if(sh&&sh.kind!=='off')n++}h+=`<td><b>${n}</b></td>`}
+  h+=`<td></td></tr></tfoot></table>`;
+  const legend=[...used.values()].sort((a,b)=>(a.order??99)-(b.order??99)||(mins(a.start)??9999)-(mins(b.start)??9999));
+  if(legend.length)h+=`<div class="xl">`+legend.map(s=>`<span><b class="k${s.color??0}">${esc(s.code)}</b>${esc(s.name)}${s.kind!=='off'&&s.start?` ${esc(s.start)}–${esc(s.end)}`:''}</span>`).join('')+`</div>`;
+  if(wk&&wk.notes&&wk.notes.trim())h+=`<div class="xn"><span>Notes</span>${esc(wk.notes.trim())}</div>`;
+  h+=`<div class="xf"><span>attarilan.github.io/roster</span><span>Exported ${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}, ${pad(now.getHours())}:${pad(now.getMinutes())}</span></div>`;
+  return h;
+}
+let exporting=false;
+async function exportWeek(kind){
+  if(exporting)return;exporting=true;
+  const notesEl=document.getElementById('notes');
+  if(notesEl&&!notesEl.readOnly){const wk=weekView(S.week);if((wk&&wk.notes||'')!==notesEl.value){clearTimeout(notesTimer);pending[S.week]=deepMerge(pending[S.week]||{},{notes:notesEl.value});flush()}}
+  toast(kind==='pdf'?'Preparing PDF…':'Preparing image…');
+  const sheet=document.createElement('div');sheet.id='xsheet';sheet.setAttribute('aria-hidden','true');
+  try{
+    await needLib('h2c');if(kind==='pdf')await needLib('pdf');
+    sheet.innerHTML=exportSheetHTML();document.body.appendChild(sheet);
+    try{await document.fonts.ready}catch(_){}
+    const canvas=await window.html2canvas(sheet,{scale:2,backgroundColor:'#ffffff',logging:false,useCORS:true,windowWidth:1260});
+    const base='Roster_'+S.week;
+    let blob,name;
+    if(kind==='png'){blob=await new Promise(r=>canvas.toBlob(r,'image/png'));name=base+'.png'}
+    else{
+      const {jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+      const pw=297,ph=210,m=8,iw=canvas.width,ih=canvas.height;const k=Math.min((pw-2*m)/iw,(ph-2*m)/ih);
+      const w=iw*k,hh=ih*k;doc.addImage(canvas.toDataURL('image/jpeg',0.92),'JPEG',(pw-w)/2,m,w,hh);
+      blob=doc.output('blob');name=base+'.pdf'}
+    await deliver(blob,name);
+  }catch(e){console.error(e);toast(e&&e.message==='load'?'Export needs internet to load once. Check the connection and try again.':'Export failed. Try again.')}
+  finally{sheet.remove();exporting=false}
+}
+async function deliver(blob,name){
+  const file=new File([blob],name,{type:blob.type});
+  const phone=matchMedia('(pointer:coarse)').matches;
+  if(phone&&navigator.canShare&&navigator.canShare({files:[file]})){
+    try{await navigator.share({files:[file],title:name});toast('Ready');return}catch(e){if(e&&e.name==='AbortError'){toast('Export cancelled');return}}}
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),30000);toast('Saved '+name);
+}
 function waText(){
   const wk=weekView(S.week);const rows=rowsFor(wk);const dates=weekDates(S.week);
   let out=`*Roster ${rangeLabel(S.week)}*\n`;
@@ -547,6 +643,7 @@ function act(a){
   if(a==='copyprev-yes'){copyPrev()}
   if(a==='clear'){S.confirm='clear';render()}
   if(a==='clear-yes'){const patch={cells:{}};for(const sid in (wk&&wk.cells)||{})for(const d in wk.cells[sid])if(wk.cells[sid][d])(patch.cells[sid]=patch.cells[sid]||{})[d]=null;S.confirm=null;queue(S.week,patch);toast('Week cleared')}
+  if(a==='exp-png'||a==='exp-pdf'){exportWeek(a==='exp-pdf'?'pdf':'png');return}
   if(a==='wa'){const txt=waText();
     const done=()=>toast('Copied. Paste it into WhatsApp');
     try{navigator.clipboard.writeText(txt).then(done,()=>fallbackCopy(txt))}catch(_){fallbackCopy(txt)}}

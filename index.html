@@ -202,6 +202,21 @@ textarea{width:100%;min-height:70px;border:1px solid var(--line);background:var(
 #xsheet .xf{margin-top:14px;font-size:11px;color:#8a938d;display:flex;justify-content:space-between}
 #xsheet .k0{background:#d9ead3;color:#244a1c}#xsheet .k1{background:#fde7b4;color:#6b4800}#xsheet .k2{background:#d3e3f6;color:#173f6b}#xsheet .k3{background:#ecd6f0;color:#5b2266}
 #xsheet .k4{background:#f8d5cd;color:#7a2614}#xsheet .k5{background:#cfeee9;color:#11524a}#xsheet .k6{background:#e6e3dc;color:#4a4740}#xsheet .k7{background:#f3d9e4;color:#73213f}
+/* Dark variant of the export sheet (used for Save image) — same palette as the app's dark theme */
+#xsheet.dark{background:#141816;color:#e7ebe7}
+#xsheet.dark .xh{border-bottom-color:#5cc2a8}
+#xsheet.dark .xk{color:#5cc2a8}
+#xsheet.dark .xm,#xsheet.dark .xw small,#xsheet.dark .xtot small,#xsheet.dark thead .dn,#xsheet.dark .xl,#xsheet.dark .xn span,#xsheet.dark .xg td{color:#9aa59e}
+#xsheet.dark .xs.f{background:#1f3322;color:#8fd19a}#xsheet.dark .xs.d{background:#3d2a1c;color:#f0a56a}
+#xsheet.dark th,#xsheet.dark td{border-color:#333b36}
+#xsheet.dark thead th,#xsheet.dark tfoot td{background:#232925}
+#xsheet.dark tbody td{background:#1c211e}
+#xsheet.dark .xg td{background:#141816}
+#xsheet.dark .xn{background:#1c211e}
+#xsheet.dark .xf{color:#6f7a73}
+#xsheet.dark .xw[style]{color:#9aa59e!important}
+#xsheet.dark .k0{background:#2a4425;color:#bfe3b3}#xsheet.dark .k1{background:#4a3a12;color:#f8d987}#xsheet.dark .k2{background:#1f3550;color:#b5d2f3}#xsheet.dark .k3{background:#41264a;color:#e3bdec}
+#xsheet.dark .k4{background:#4d2620;color:#f5b9aa}#xsheet.dark .k5{background:#173f3a;color:#a6e6dc}#xsheet.dark .k6{background:#33322e;color:#cfccc4}#xsheet.dark .k7{background:#4a2335;color:#f1b8cf}
 .toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-weight:600;font-size:13px;z-index:30}
 .saving{font-size:12px;color:var(--muted)}
 
@@ -523,9 +538,10 @@ async function exportWeek(kind){
   const sheet=document.createElement('div');sheet.id='xsheet';sheet.setAttribute('aria-hidden','true');
   try{
     await needLib('h2c');if(kind==='pdf')await needLib('pdf');
+    const dark=kind==='png';if(dark)sheet.classList.add('dark');
     sheet.innerHTML=exportSheetHTML();document.body.appendChild(sheet);
     try{await document.fonts.ready}catch(_){}
-    const canvas=await window.html2canvas(sheet,{scale:2,backgroundColor:'#ffffff',logging:false,useCORS:true,windowWidth:1260});
+    const canvas=await window.html2canvas(sheet,{scale:2,backgroundColor:dark?'#141816':'#ffffff',logging:false,useCORS:true,windowWidth:1260});
     const base='Roster_'+S.week;
     let blob,name;
     if(kind==='png'){blob=await new Promise(r=>canvas.toBlob(r,'image/png'));name=base+'.png'}
